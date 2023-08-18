@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model categories {
+  id             Int        @id @default(autoincrement())
+  title          String
+  isactive       Boolean    @default(true)
+  createby       Int
+  createat       DateTime   @default(now())
+  product        products[]
+
+}
+
+model products {
+  id              Int           @id @default(autoincrement())
+  categoryid      Int
+  title           String
+  description     String
+  lastactivityon  DateTime      @default(now())
+  isactive        Boolean       @default(true)
+  category        categories    @relation(fields: [categoryid], references: [id])
+}
+
+
+model users {
+  id           Int         @id @default(autoincrement())
+  firstname    String
+  lastname     String?
+  mobile       String
+  countrycode  String?
+  emailid      String
+  password     String
+  createdat    DateTime    @default(now())
+  modifiedat   DateTime?
+  lastactiveon DateTime?
+  isactive     Boolean     @default(true)
+  userrole     userroles[]
+}
+
+model roles {
+  id        Int         @id @default(autoincrement())
+  title     String
+  createdat DateTime    @default(now())
+  isactive  Boolean     @default(true)
+  userrole  userroles[]
+}
+
+model userroles {
+  id         Int       @id @default(autoincrement())
+  userid     Int
+  roleid     Int
+  createdat  DateTime  @default(now())
+  modifiedat DateTime?
+  user       users     @relation(fields: [userid], references: [id])
+  role       roles     @relation(fields: [roleid], references: [id])
+}
